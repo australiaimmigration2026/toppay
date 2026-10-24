@@ -1,11 +1,13 @@
 {
   "name": "toppay",
   "main": "index.js",
-  "version": "1.5.0",
+  "version": "1.5.3",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
+    "android:phone": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-android.ps1",
+    "android:release": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-android-release.ps1",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",

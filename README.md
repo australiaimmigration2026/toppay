@@ -6,17 +6,37 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ### Run on a USB-connected Android phone from Windows
 
+Java 17 and the Android SDK are configured as Windows user environment variables.
+With USB debugging enabled and the computer authorized on your phone, run:
+
+```powershell
+cd D:\web\Toppay
+npm.cmd run android:phone
+```
+
+This launcher loads the saved environment settings, checks device authorization,
+connects port 8081 over USB for a single phone, then builds and launches the app.
+Keep its terminal open while using the development build. The first build may
+download additional Gradle dependencies. Expo Go does not include this project's
+custom native notification module or native Google sign-in module.
+
+For the manual commands instead:
+
 Enable USB debugging on the phone, accept its authorization prompt, then run
 these commands in PowerShell from the project directory:
 
 ```powershell
-$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot'
-$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'User')
+$env:ANDROID_HOME = [Environment]::GetEnvironmentVariable('ANDROID_HOME', 'User')
+$env:Path = "$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:Path"
 & "$env:ANDROID_HOME\platform-tools\adb.exe" devices
 npm.cmd run android -- --device
 ```
 
-Set `JAVA_HOME` to your installed JDK 17 directory if it differs. On this
+The local setup saves `JAVA_HOME` and `ANDROID_HOME` as Windows user environment
+variables. Restart your terminal or VS Code after installation, or use the commands
+above to load them into an already-open terminal. If `adb devices` shows
+`unauthorized`, unlock your phone and accept **Allow USB debugging**. On this
 project, Android Studio's Java 25 runtime fails while loading the Gradle
 settings plugin with `Error resolving plugin ... > 25.0.3`. Use JDK 17 for
 the build. The `.cmd` command works when PowerShell blocks `npm.ps1`.
@@ -27,6 +47,19 @@ phone cannot reach it over USB, run:
 ```powershell
 & "$env:ANDROID_HOME\platform-tools\adb.exe" reverse tcp:8081 tcp:8081
 ```
+
+### Build a signed Android release APK
+
+From the project root, run:
+
+```powershell
+npm.cmd run android:release
+```
+
+The release launcher loads the saved JDK 17 `JAVA_HOME` even in an already-open
+PowerShell session, then securely prompts for the Android signing store and key
+passwords if they are not already set in that session. The APK is written to
+`android\app\build\outputs\apk\release\app-release.apk`.
 
 1. Install dependencies
 

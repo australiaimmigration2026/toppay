@@ -4,7 +4,7 @@ cd android
 .\gradlew.bat assembleRelease
 
 
-
+123456789
 $store = Read-Host "Keystore password" -AsSecureString
 $key = Read-Host "Key password" -AsSecureString
 $env:TOPPAY_STORE_PASSWORD = [System.Net.NetworkCredential]::new('', $store).Password
@@ -13,3 +13,4 @@ $env:TOPPAY_KEY_PASSWORD = [System.Net.NetworkCredential]::new('', $key).Passwor
 
 
 npm.cmd run android -- --device RMX3151      
+ D:\web\Toppay\android\app\build\outputs\apk\debug\app-debug.apk

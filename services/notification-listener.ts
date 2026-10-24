@@ -1,7 +1,7 @@
 import { collection, deleteDoc, doc, getDocs, orderBy, query, setDoc } from 'firebase/firestore';
 import { NativeModules, Platform } from 'react-native';
 
-import { db } from '@/services/firebase';
+import { auth, db } from '@/services/firebase';
 
 type CapturedNotification = {
   id: string;
@@ -15,7 +15,7 @@ type CapturedNotification = {
 type NativeNotificationQueue = {
   hasAccess(): Promise<boolean>;
   openSettings(): Promise<void>;
-  setOwner(uid: string | null): Promise<void>;
+  setOwner(uid: string | null, refreshToken: string | null): Promise<void>;
   getPending(): Promise<string>;
   acknowledge(id: string): Promise<void>;
 };
@@ -37,7 +37,8 @@ export async function openNotificationAccessSettings(): Promise<void> {
 }
 
 export async function setNotificationOwner(uid: string | null): Promise<void> {
-  await nativeQueue()?.setOwner(uid);
+  const user = auth.currentUser;
+  await nativeQueue()?.setOwner(uid, uid && user?.uid === uid ? user.refreshToken : null);
 }
 
 let syncing = false;
@@ -54,12 +55,13 @@ export async function syncCapturedNotifications(uid: string): Promise<void> {
       const postedDate = new Date(item.postedAt);
       if (Number.isNaN(postedDate.getTime())) continue;
       const twoDigits = (value: number) => String(value).padStart(2, '0');
+      const hour = postedDate.getHours();
       await setDoc(doc(destination, item.id), {
         packageName: item.packageName,
         title: item.title,
         text: item.text,
         postedAt: item.postedAt,
-        time: `${twoDigits(postedDate.getHours())}:${twoDigits(postedDate.getMinutes())}:${twoDigits(postedDate.getSeconds())}`,
+        time: `${twoDigits(hour % 12 || 12)}:${twoDigits(postedDate.getMinutes())}:${twoDigits(postedDate.getSeconds())} ${hour < 12 ? 'AM' : 'PM'}`,
         date: `${twoDigits(postedDate.getDate())}/${twoDigits(postedDate.getMonth() + 1)}/${postedDate.getFullYear()}`,
       });
       const snapshot = await getDocs(query(destination, orderBy('postedAt', 'desc')));
