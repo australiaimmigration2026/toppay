@@ -113,7 +113,7 @@ export default function HomeScreen() {
                 <Animated.View style={[styles.currencyBadge, { transform: [{ translateX: badgePosition }] }]}><Text style={styles.currencyText}>৳</Text></Animated.View>
                 <Animated.Text style={[styles.balanceText, styles.balanceTextHidden, { opacity: balanceProgress.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }) }]} numberOfLines={1}>{t('homeDesign.showBalance')}</Animated.Text>
                 <Animated.Text style={[styles.balanceText, styles.balanceTextVisible, { opacity: balanceProgress }]} numberOfLines={1}>
-                  {isLoading ? t('common.loading') : error || !summary ? t('homeDesign.balanceUnavailable') : formatCurrency(summary.balance).replace('৳', '')}
+                  {isLoading ? t('common.loading') : error || !summary ? t('homeDesign.balanceUnavailable') : formatCurrency(summary.balance, 'en-US').replace('BDT ', '')}
                 </Animated.Text>
               </Pressable>
             </View>
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   currencyText: { color: '#FFFFFF', fontSize: 19 },
   balanceText: { position: 'absolute', left: 0, right: 0, color: '#555555', textAlign: 'center' },
   balanceTextHidden: { paddingLeft: 38, paddingRight: 6, fontSize: 14, fontWeight: '600' },
-  balanceTextVisible: { paddingLeft: 6, paddingRight: 38, fontSize: 17, fontWeight: '700' },
+  balanceTextVisible: { paddingLeft: 6, paddingRight: 38, fontSize: 20, fontWeight: '700' },
   headerButton: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
   headerOutlineButton: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
   badge: { position: 'absolute', right: -3, top: -5, backgroundColor: '#FFFFFF', minWidth: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
